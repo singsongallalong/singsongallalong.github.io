@@ -7,16 +7,18 @@
   <link rel="stylesheet" href="/assets/site.css">
 </head>
 <body>
-<header class="wrap">
-  <a href="/">Home</a>
-  <a href="/meme/">Memes</a>
-  <a href="/theme/">Themes</a>
-  <a href="/post/">Posts</a>
-  <input id="search" type="search" placeholder="Search…">
+<header class="wrap site-header">
+  <nav class="site-nav">
+    <a href="/">Home</a>
+    <a href="/meme/">Memes</a>
+    <a href="/theme/">Themes</a>
+    <a href="/model/">Models</a>
+  </nav>
+  <input id="search" type="search" placeholder="Search…" aria-label="Search site">
 </header>
 <main class="wrap">
   {{ content | safe }}
 </main>
-<script src="/assets/search.js"></script>
+<script src="/assets/search.js" defer></script>
 </body>
 </html>
