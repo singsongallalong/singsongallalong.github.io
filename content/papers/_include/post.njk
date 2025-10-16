@@ -8,12 +8,61 @@ pagination: false
 
   {% if memes or themes %}
   <p>
-    {% for m in memes or [] %}<a class="chip" href="/meme/{{ m }}/">{{ m }}</a> {% endfor %}
-    {% for t in themes or [] %}<a class="chip chip--theme" href="/theme/{{ t }}/">{{ t }}</a> {% endfor %}
+    {% for m in memes or [] %}
+      {% set memeEntry = collections.memes | findByFileSlug(m) %}
+      {% if memeEntry %}
+      <a class="chip" href="{{ memeEntry.url }}">{{ memeEntry.data.title or memeEntry.fileSlug }}</a>
+      {% else %}
+      <a class="chip" href="/meme/{{ m }}/">{{ m }}</a>
+      {% endif %}
+    {% endfor %}
+    {% for t in themes or [] %}
+      {% set themeEntry = collections.themes | findByFileSlug(t) %}
+      {% if themeEntry %}
+      <a class="chip chip--theme" href="{{ themeEntry.url }}">{{ themeEntry.data.title or themeEntry.fileSlug }}</a>
+      {% else %}
+      <a class="chip chip--theme" href="/theme/{{ t }}/">{{ t }}</a>
+      {% endif %}
+    {% endfor %}
   </p>
   {% endif %}
 
   <div class="prose">
     {{ content | safe }}
   </div>
+
+  {% if ancestors or descendants %}
+  <div class="related">
+    {% if ancestors %}
+    <section>
+      <h2>Ancestors</h2>
+      <ul class="link-list">
+        {% for slug in ancestors %}
+          {% set related = collections.papers | findByFileSlug(slug) %}
+          {% if related %}
+          <li><a href="{{ related.url }}">{{ related.data.title or related.fileSlug }}</a></li>
+          {% else %}
+          <li>{{ slug }}</li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
+    {% if descendants %}
+    <section>
+      <h2>Descendants</h2>
+      <ul class="link-list">
+        {% for slug in descendants %}
+          {% set related = collections.papers | findByFileSlug(slug) %}
+          {% if related %}
+          <li><a href="{{ related.url }}">{{ related.data.title or related.fileSlug }}</a></li>
+          {% else %}
+          <li>{{ slug }}</li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
+  </div>
+  {% endif %}
 </article>
