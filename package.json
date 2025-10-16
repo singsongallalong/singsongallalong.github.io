@@ -1,0 +1,22 @@
+{
+  "name": "mom",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "eleventy",
+    "dev": "eleventy --serve --port=8080"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@11ty/eleventy": "3.1.2"
+  },
+"devDependencies": {
+    "@11ty/eleventy": "3.0.0",
+    "markdown-it": "14.1.0",
+    "markdown-it-attrs": "4.1.6",
+    "lunr": "2.3.9"
+  }
+}
