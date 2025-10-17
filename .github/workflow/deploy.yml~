@@ -2,7 +2,7 @@ name: Deploy Eleventy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]     # ensure this matches your default branch
+    branches: [ main ]   # or 'master'
   workflow_dispatch:
 
 permissions:
@@ -20,33 +20,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0       # get full history (helps some plugins)
-          lfs: true            # if you use Git LFS for images
-
-      - name: Show commit
-        run: |
-          git log -1 --pretty=fuller
-          echo "Changed files in last commit:"
-          git show --name-status --oneline
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
+          cache: 'npm'
 
       - name: Install
         run: npm ci
 
-      # If you rely on ELEVENTY_ENV locally, set it here too
       - name: Build
-        env:
-          ELEVENTY_ENV: production
-        run: |
-          npx @11ty/eleventy --input=content --output=_site
-          echo "Built files:"
-          find _site -maxdepth 2 -type f | sort | sed -n '1,120p'
+        run: npm run build   # outputs to ./_site
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
