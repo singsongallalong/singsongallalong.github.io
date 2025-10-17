@@ -1,0 +1,42 @@
+---
+layout: base.njk
+---
+<article>
+  <h1>{{ title }}</h1>
+
+  <p>
+    <a class="chip chip--theme" href="{{ '/theme/' | url }}">All themes</a>
+  </p>
+
+  <div class="prose">
+    {{ content | safe }}
+  </div>
+
+  {% set related = collections.papers | filterByTheme(page.fileSlug) %}
+  {% if related | length %}
+  <section class="related">
+    <h2>Observed in models</h2>
+    <ul class="link-list">
+      {% for model in related %}
+        <li><a href="{{ model.url | url }}">{{ model.data.title or model.fileSlug }}</a></li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
+  {# Explore other themes (exclude this page) #}
+  {% set shown = 0 %}
+  {% set maxShown = 12 %}
+  <section class="related">
+    <h2>Explore other themes</h2>
+    <p class="catalog__tags">
+      {% for t in collections.themes | sortByTitle %}
+        {% if t.fileSlug != page.fileSlug and shown < maxShown %}
+          <a class="chip chip--theme" href="{{ t.url | url }}">{{ t.data.title or t.fileSlug }}</a>
+          {% set shown = shown + 1 %}
+        {% endif %}
+      {% endfor %}
+    </p>
+  </section>
+</article>
+

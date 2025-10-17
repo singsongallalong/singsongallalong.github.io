@@ -1,20 +1,10 @@
 ---
-layout: base.njk
+layout: theme.njk
 title: receptive-field
 permalink: /theme/{{ page.fileSlug }}/
-description: All input-data a given output-feature may be informed by
+description: All input-data a given slice of output may be informed by
 ---
 
 The receptive-field of a pixel in the output of an image-to-image-generation network is the area in the input image the output image may depend upon. For example, if we convolve a simple $3\times 3$-wide kernel kernel over an input image, the receptive field of a given output pixel are the (typically $9$ except on the boundaries) values which are summed together in the kernel to produce the output. In a fully connected linear layer, the receptive field of each output is the entire input. 
 
 "What is a *receptive field*? Basically, how far away can an input pixel be while influencing the output at a given pixel? For RNNs, hypothetically this is quite adaptive and dependent on the state transitions. For a CNN, it's bounded above due to a simple theorem on the supports of convolutions, or alternatively, just looking at a graph of the connections. It goes up multiplicatively in the kernel sizes. So convolutional nets have a fixed receptive field size. To put it in obvious terms the value at $f * g (n) = \Sigma_{-k/2 \leq m \leq k/2} f(m - n)g(m)$ for example (assuming $k$ is even) depends on $k$ values of $f$ around $n$. I want to reiterate that a thorough-going theme here in my document and opinion is that the useful heuristics for choosing models tend to be their hypothetical capacity to connect input features to output features, something like 'feature-connectivity.' In the case of images like this, receptive fields encode that: the wider a receptive field, the more we can connect input features far away from a given output pixel to its value. All of this makes sense because the features for inputs and outputs are the same for images. In general when that's the case looking at the capacity of a network to abstractly connect information in relevant places (e.g. graphically if it suits your intuition) is a recurrent theme."
-
-{% set related = collections.papers | filterByTheme(page.fileSlug) %}
-{% if related | length %}
-## Models which utilize this theme
-<ul class="link-list">
-  {% for model in related %}
-  <li><a href="{{ model.url }}">{{ model.data.title or model.fileSlug }}</a></li>
-  {% endfor %}
-</ul>
-{% endif %}

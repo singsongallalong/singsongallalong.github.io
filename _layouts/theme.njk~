@@ -1,0 +1,41 @@
+---
+layout: base.njk
+---
+<article>
+  <h1>{{ title }}</h1>
+
+  {# Quick nav chip back to the Themes index #}
+  <p>
+    <a class="chip chip--theme" href="/theme/">All themes</a>
+  </p>
+
+  <div class="prose">
+    {{ content | safe }}
+  </div>
+
+  {# Models that include this theme #}
+  {% set related = collections.papers | filterByTheme(page.fileSlug) %}
+  {% if related | length %}
+  <section class="related">
+    <h2>Observed in models</h2>
+    <ul class="link-list">
+      {% for model in related %}
+        <li><a href="{{ model.url }}">{{ model.data.title or model.fileSlug }}</a></li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
+  {# Optional: show other themes as chips to encourage exploration #}
+  {% set others = collections.themes | reject("fileSlug", page.fileSlug) | slice(0, 12) %}
+  {% if others | length %}
+  <section class="related">
+    <h2>Explore other themes</h2>
+    <p class="catalog__tags">
+      {% for t in others %}
+        <a class="chip chip--theme" href="{{ t.url }}">{{ t.data.title or t.fileSlug }}</a>
+      {% endfor %}
+    </p>
+  </section>
+  {% endif %}
+</article>
