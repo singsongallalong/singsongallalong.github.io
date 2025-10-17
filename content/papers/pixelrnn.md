@@ -7,7 +7,7 @@ description: Autoregressive model which is an important immediate ancestor to Wa
 memes:
   - idiotropy
   - autoregression
-  - hierarchical
+  - multigrid
   - discretization
 themes:
   - receptive-field
