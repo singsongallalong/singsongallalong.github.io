@@ -6,7 +6,7 @@ eleventyExcludeFromCollections: true
 ---
 # Themes
 
-Themes capture broader narratives around how models are created, evaluated, and deployed.
+Where memes record properties (adjectives) expressed in specific models (proper nouns), themes (akin to adverbs) record patterns in the development (verb) of models. Although I may think of themes as akin to adverbs, in practice they often manifest as points of view relevant in the production of models according to their authors.
 
 <div class="catalog" data-catalog="theme">
   <div class="catalog__controls">

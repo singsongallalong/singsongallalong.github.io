@@ -1,0 +1,73 @@
+---
+layout: base.njk
+---
+<article>
+  <h1>{{ title }}</h1>
+
+  {# --- Chips row: concepts + link back to all memes --- #}
+  {% if concepts or true %}
+  <p>
+    {% for cslug in concepts or [] %}
+      {% set c = collections.concepts | findByFileSlug(cslug) %}
+      {% if c %}
+        <a class="chip chip--concept" href="{{ c.url }}">{{ c.data.title or c.fileSlug }}</a>
+      {% else %}
+        <a class="chip chip--concept" href="/concept/{{ cslug }}/">{{ cslug }}</a>
+      {% endif %}
+    {% endfor %}
+    <a class="chip" href="/meme/">All memes</a>
+  </p>
+  {% endif %}
+
+  <div class="prose">
+    {{ content | safe }}
+  </div>
+
+  {# --- Models featuring this meme --- #}
+  {% set relatedModels = collections.papers | filterByMeme(page.fileSlug) %}
+  {% if relatedModels | length %}
+  <section class="related">
+    <h2>Models featuring this meme</h2>
+    <ul class="link-list">
+      {% for model in relatedModels %}
+        <li><a href="{{ model.url }}">{{ model.data.title or model.fileSlug }}</a></li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
+  {# --- Related memes (share at least one concept) --- #}
+  {% set myConcepts = concepts or [] %}
+  {% if myConcepts | length %}
+    {% set siblings = [] %}
+    {% for m in collections.memes %}
+      {% if m.fileSlug != page.fileSlug %}
+        {% set overlap = false %}
+        {% for cslug in (m.data.concepts or []) %}
+          {% if myConcepts | join(',') | contains(cslug) %}
+            {% set overlap = true %}
+          {% endif %}
+        {% endfor %}
+        {% if overlap and not (siblings | join(',') | contains(m.fileSlug)) %}
+          {% set siblings = siblings.concat([m.fileSlug]) %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if siblings | length %}
+    <section class="related">
+      <h2>Related memes</h2>
+      <ul class="link-list">
+        {% for s in siblings %}
+          {% set mm = collections.memes | findByFileSlug(s) %}
+          {% if mm %}
+            <li><a href="{{ mm.url }}">{{ mm.data.title or mm.fileSlug }}</a></li>
+          {% else %}
+            <li>{{ s }}</li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
+  {% endif %}
+</article>

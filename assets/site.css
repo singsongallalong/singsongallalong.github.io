@@ -1,14 +1,23 @@
 :root {
-  color-scheme: light dark;
-  --bg: #f5f5f5;
-  --fg: #1b1b1f;
-  --accent: #3366ff;
-  --surface: #ffffff;
-  --surface-border: #d0d7de;
-  --chip-bg: #e8ecff;
-  --chip-theme-bg: #e4f7f3;
-  --muted: #5b5b66;
-  font-size: 16px;
+  /* fonts */
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Source Serif 4", "Charter", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --font-fancy: "Baskervville", "STIX Two Text", "Libre Baskerville", Georgia, serif;
+
+  /* dark palette (default) */
+  color-scheme: dark light;
+  --bg: #0f1115;
+  --fg: #e6e7ea;
+  --muted: #a5adbb;
+  --accent: #7aa2ff;
+
+  --surface: #181b20;
+  --surface-border: #2a2f37;
+
+  /* chips tuned for dark UI */
+  --chip-bg: #243042;           /* memes */
+  --chip-theme-bg: #203a33;     /* themes */
+  --chip-concept-bg: #3b2e1f;   /* concepts */
 }
 
 * {
@@ -17,11 +26,18 @@
 
 body {
   margin: 0;
-  font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto", sans-serif;
+  font-family: var(--font-serif);
   line-height: 1.6;
   background: var(--bg);
   color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-kerning: normal;
+  font-feature-settings: "liga" 1, "calt" 1, "kern" 1, "onum" 0, "lnum" 1; /* lining numerals for technical text */
 }
+
+a { color: var(--accent); }
+a:hover, a:focus { text-decoration: underline; }
 
 .wrap {
   width: min(60rem, 100%);
@@ -79,6 +95,14 @@ body {
   margin: 0;
 }
 
+.prose img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1rem auto;
+  border-radius: 0.5rem; /* optional aesthetic */
+}
+
 .chip {
   display: inline-flex;
   align-items: center;
@@ -94,6 +118,10 @@ body {
 
 .chip--theme {
   background: var(--chip-theme-bg);
+}
+
+.chip--concept {
+  background: var(--chip-concept-bg);
 }
 
 #search-results {
@@ -267,3 +295,12 @@ body {
     box-shadow: none;
   }
 }
+
+.home-hero { margin: 1rem 0 2rem; }
+.home-hero .lede { opacity: .85; margin-top: .25rem; }
+.home-search input[type="search"] { width: 100%; max-width: 28rem; margin-top: .75rem; }
+
+.stat-cards { display:flex; gap:1rem; flex-wrap:wrap; padding:0; list-style:none; }
+.stat-cards li { background:var(--chip); border-radius:12px; padding:.75rem 1rem; }
+.stat-num { font-size:1.5rem; font-weight:700; display:block; }
+.stat-label { opacity:.8; }

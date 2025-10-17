@@ -16,10 +16,40 @@ const removeIndexEntries = items =>
 
 module.exports = function (eleventyConfig) {
     eleventyConfig.setLibrary("md", md);
+    eleventyConfig.addPassthroughCopy({ "content/images": "images" });
     eleventyConfig.addPassthroughCopy({ "assets": "assets" });
 
     eleventyConfig.addFilter("sortByTitle", collection => {
 	return [...(collection || [])].sort(byTitle);
+    });
+
+    eleventyConfig.addFilter("sortByDateDesc", (items = []) => {
+	const norm = (it) => {
+	    // prefer Eleventy’s computed item.date, then page.date, then front-matter date
+	    const d =
+		  (it && it.date) ||
+		  (it && it.data && it.data.page && it.data.page.date) ||
+		  (it && it.data && it.data.date) ||
+		  0;
+	    // Already a Date? keep it; else try to parse.
+	    return d instanceof Date ? d : new Date(d || 0);
+	};
+	return [...items].sort((a, b) => norm(b) - norm(a));
+    });
+
+    // Sort plain objects of shape {date, ...}, newest first (used in What's new)
+    eleventyConfig.addFilter("sortByDateDescMixed", (arr = []) => {
+	return [...arr].sort((a, b) => {
+	    const da = a.date instanceof Date ? a.date : new Date(a.date || 0);
+	    const db = b.date instanceof Date ? b.date : new Date(b.date || 0);
+	    return db - da;
+	});
+    });
+
+    eleventyConfig.addFilter("filterByConcept", (collection, slug) => {
+	return (collection || []).filter(item =>
+	    (item.data.concepts || []).includes(slug)
+	);
     });
 
     eleventyConfig.addFilter("date", (value, fmt = "yyyy-LL-dd") => {
@@ -63,30 +93,68 @@ module.exports = function (eleventyConfig) {
 	).sort(byTitle)
     );
 
-    // Very small wikilink transform: [[slug]] -> links to meme/theme/model if slug exists
+    // add alongside your existing memes/themes/papers
+    eleventyConfig.addCollection("concepts", api =>
+	api.getFilteredByGlob("content/concepts/**/*.md")
+    );
+
+    // helpers
+    eleventyConfig.addFilter("filterMemesByConcept", (memes, conceptSlug) => {
+	const s = String(conceptSlug).toLowerCase();
+	return (memes || []).filter(m =>
+	    (m.data.concepts || []).map(x => String(x).toLowerCase().trim()).includes(s)
+	);
+    });
+
+    eleventyConfig.addFilter("findBySlug", (items, slug) =>
+	(items || []).find(i => i.fileSlug === slug)
+    );
+
     eleventyConfig.addTransform("wikilinks", (content, outputPath) => {
+	if (typeof content !== "string") return content;
 	if (!outputPath || !outputPath.endsWith(".html")) return content;
 
-	return content.replace(/\[\[([a-z0-9-:]+)\]\]/gi, (match, raw) => {
-	    const [prefix, slugCandidate] = raw.includes(":")
-		  ? raw.split(":")
-		  : [null, raw];
-	    const slug = slugCandidate.toLowerCase();
+	// [[meme:Slug-Here|Display Text]]
+	// [[Slug-Here|Display Text]]
+	// [[Slug-Here]]
+	const WIKILINK_RE = /\[\[(?:([A-Za-z]+):)?([^\]\|]+?)(?:\|([^\]]+))?\]\]/g;
 
-	    const prefixMap = {
-		meme: `/meme/${slug}/`,
-		theme: `/theme/${slug}/`,
-		model: `/model/${slug}/`,
-		paper: `/model/${slug}/`,
-	    };
+	const prefixMap = {
+	    meme:  (slug) => `/meme/${slug}/`,
+	    theme: (slug) => `/theme/${slug}/`,
+	    concept: (slug) => `/concept/${slug}/`,
+	    model: (slug) => `/model/${slug}/`,
+	    paper: (slug) => `/model/${slug}/`,
+	};
 
+	const escapeHtml = (s) =>
+	      String(s)
+	      .replace(/&/g, "&amp;")
+	      .replace(/</g, "&lt;")
+	      .replace(/>/g, "&gt;")
+	      .replace(/"/g, "&quot;")
+	      .replace(/'/g, "&#39;");
+
+	return content.replace(WIKILINK_RE, (_m, prefixRaw, slugCandidateRaw, aliasRaw) => {
+	    // What the author typed (preserve casing/spaces for display if no alias)
+	    const typed = (slugCandidateRaw || "").trim();
+	    const display = (aliasRaw && aliasRaw.trim()) || typed;
+
+	    // Normalize slug for the URL (lowercase; collapse spaces to hyphens if you want)
+	    const normalizedSlug = typed.toLowerCase(); // or: typed.toLowerCase().replace(/\s+/g, "-")
+
+	    // Route by prefix if provided, else use your default guess order
+	    const prefix = (prefixRaw || "").toLowerCase();
+	    let href;
 	    if (prefix && prefixMap[prefix]) {
-		return `<a href="${prefixMap[prefix]}">${slug}</a>`;
+		href = prefixMap[prefix](normalizedSlug);
+	    } else {
+		// default order: model, meme, theme (keep your original order)
+		href = `/meme/${normalizedSlug}/`;
+		// If you later want smarter guessing, switch to a shortcode (has collections)
 	    }
 
-	    // default order: model, meme, theme
-	    const guesses = [`/model/${slug}/`, `/meme/${slug}/`, `/theme/${slug}/`];
-	    return `<a href="${guesses[0]}">${slug}</a>`;
+	    return `<a href="${href}">${escapeHtml(display)}</a>`;
 	});
     });
 
@@ -94,6 +162,6 @@ module.exports = function (eleventyConfig) {
 	dir: { input: "content", includes: "../_layouts", output: "_site" },
 	markdownTemplateEngine: "njk",
 	htmlTemplateEngine: "njk",
-	templateFormats: ["md", "njk"],
+	templateFormats: ["md", "njk", "11ty.js"]
     };
 };

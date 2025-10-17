@@ -1,0 +1,20 @@
+---
+layout: base.njk
+title: "Hierarchical"
+permalink: /concept/hierarchical/
+description: Buckets of related memes; may have parents/children.
+parents: []     # 0..n parent slugs
+aliases: []    # optional
+---
+
+An adjective rather than a noun, this concept presents in many memes. In the most general sense it represents monotonically iterative structures, or progressive abstractions, or example, subsampling an image or smoothing an image in progressive degrees to represent varying shades of abstraction or specificity would constitute a hierarchical abstraction (a [[multiscale]] representation). 
+
+{% set relatedMemes = collections.memes | filterByConcept(page.fileSlug) %}
+{% if relatedMemes | length %}
+## Memes tagged with this concept
+<ul class="link-list">
+  {% for meme in relatedMemes %}
+    <li><a href="{{ meme.url }}">{{ meme.data.title or meme.fileSlug }}</a></li>
+  {% endfor %}
+</ul>
+{% endif %}

@@ -1,0 +1,122 @@
+---
+layout: base.njk
+---
+<article>
+  <h1>{{ title }}</h1>
+
+  {# --- Breadcrumbs (optional) --- #}
+  {% set slug = page.fileSlug %}
+  {% set crumbs = conceptBreadcrumbs[slug] or [] %}
+  {% if crumbs | length > 1 %}
+    <nav class="breadcrumbs">
+      {% for s in crumbs %}
+        {% set c = conceptsBySlug[s] %}
+        {% if loop.last %}
+          <span>{{ c.title }}</span>
+        {% else %}
+          <a href="{{ c.url }}">{{ c.title }}</a> ›
+        {% endif %}
+      {% endfor %}
+    </nav>
+  {% endif %}
+
+  {# --- Meta chips row (parents + quick link to index) --- #}
+  {% if parents or true %}
+  <p>
+    {% for pslug in parents or [] %}
+      {% set parent = conceptsBySlug[pslug] %}
+      {% if parent %}
+        <a class="chip chip--concept" href="{{ parent.url }}">{{ parent.title }}</a>
+      {% else %}
+        <a class="chip chip--concept" href="/concept/{{ pslug }}/">{{ pslug }}</a>
+      {% endif %}
+    {% endfor %}
+    <a class="chip" href="/concept/">All concepts</a>
+  </p>
+  {% endif %}
+
+  <div class="prose">
+    {{ content | safe }}
+  </div>
+
+  {# --- Related (parents / subconcepts) like ancestors/descendants --- #}
+  {% set children = conceptChildren[slug] or [] %}
+  {% if (parents and parents | length) or (children and children | length) %}
+  <div class="related">
+    {% if parents and parents | length %}
+    <section>
+      <h2>Parents</h2>
+      <ul class="link-list">
+        {% for pslug in parents %}
+          {% set p = conceptsBySlug[pslug] %}
+          {% if p %}
+            <li><a href="{{ p.url }}">{{ p.title }}</a></li>
+          {% else %}
+            <li>{{ pslug }}</li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
+
+    {% if children and children | length %}
+    <section>
+      <h2>Subconcepts</h2>
+      <ul class="link-list">
+        {% for cslug in children %}
+          {% set c = conceptsBySlug[cslug] %}
+          {% if c %}
+            <li><a href="{{ c.url }}">{{ c.title }}</a></li>
+          {% else %}
+            <li>{{ cslug }}</li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {# --- Memes in this concept (chip list) --- #}
+  <section>
+    <h2>Memes in this concept</h2>
+    {% set memesHere = collections.memes | filterMemesByConcept(slug) %}
+    {% if memesHere | length %}
+      <p>
+        {% for m in memesHere %}
+          <a class="chip" href="{{ m.url }}">{{ m.data.title or m.fileSlug }}</a>
+        {% endfor %}
+      </p>
+    {% else %}
+      <p>No memes tagged with this concept yet.</p>
+    {% endif %}
+  </section>
+
+  {# --- Optional: Sibling concepts (share a parent) --- #}
+  {% set siblings = [] %}
+  {% if parents and parents | length %}
+    {% for pslug in parents %}
+      {% for sib in conceptChildren[pslug] or [] %}
+        {% if sib != slug and not (siblings | join(',') | contains(sib)) %}
+          {% set siblings = siblings.concat([sib]) %}
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+  {% endif %}
+
+  {% if siblings | length %}
+  <section>
+    <h2>Related (siblings)</h2>
+    <ul class="link-list">
+      {% for s in siblings %}
+        {% set c = conceptsBySlug[s] %}
+        {% if c %}
+          <li><a href="{{ c.url }}">{{ c.title }}</a></li>
+        {% else %}
+          <li>{{ s }}</li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+</article>

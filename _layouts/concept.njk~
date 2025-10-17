@@ -1,0 +1,46 @@
+---
+layout: base.njk
+---
+<article>
+  <h1>{{ title }}</h1>
+
+  {% set slug = page.fileSlug %}
+  {% set crumbs = conceptBreadcrumbs[slug] or [] %}
+  {% if crumbs.length > 1 %}
+    <nav class="breadcrumbs">
+      {% for s in crumbs %}
+        {% set c = conceptsBySlug[s] %}
+        {% if loop.last %}<span>{{ c.title }}</span>
+        {% else %}<a href="{{ c.url }}">{{ c.title }}</a> ›
+        {% endif %}
+      {% endfor %}
+    </nav>
+  {% endif %}
+
+  {% if description %}<p>{{ description }}</p>{% endif %}
+
+  {% set children = conceptChildren[slug] or [] %}
+  {% if children.length %}
+    <h2>Subconcepts</h2>
+    <ul>
+    {% for s in children %}
+      {% set c = conceptsBySlug[s] %}
+      <li><a href="{{ c.url }}">{{ c.title }}</a></li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+
+  <h2>Memes in this concept</h2>
+  {% set memesHere = collections.memes | filterMemesByConcept(slug) %}
+  {% if memesHere.length %}
+    <ul>
+      {% for m in memesHere %}
+        <li><a href="{{ m.url }}">{{ m.data.title or m.fileSlug }}</a></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No memes tagged with this concept yet.</p>
+  {% endif %}
+
+  <div class="prose">{{ content | safe }}</div>
+</article>

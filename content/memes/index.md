@@ -6,7 +6,7 @@ eleventyExcludeFromCollections: true
 ---
 # Memes
 
-Browse the catalog of memes to discover the recurring traits that show up across models.
+Notable or relevant traits which have been found to be expressed in specific models.
 
 <div class="catalog" data-catalog="meme">
   <div class="catalog__controls">

@@ -1,5 +1,23 @@
 <!doctype html>
 <html lang="en">
+<script>
+  // MathJax v3 config (run this before loading the script)
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      tags: 'ams'           // numbered equations
+    },
+    options: {
+      // Don’t try to typeset code/sample blocks
+    },
+    svg: { fontCache: 'global' } // or use CHTML if you prefer webfonts
+  };
+</script>
+<script id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<!-- or: tex-chtml.js for HTML/CSS instead of SVG -->
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width">
@@ -13,6 +31,7 @@
     <a href="/meme/">Memes</a>
     <a href="/theme/">Themes</a>
     <a href="/model/">Models</a>
+    <a href="/concept/">Concepts</a>
   </nav>
   <input id="search" type="search" placeholder="Search…" aria-label="Search site">
 </header>
