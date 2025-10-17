@@ -4,9 +4,9 @@ title: Models
 permalink: /model/
 eleventyExcludeFromCollections: true
 ---
-# Model catalog
+# Models
 
-Use the filters below to narrow the catalog of recorded models by the memes and themes they exhibit.
+A searchable catalog of models covered. 
 
 <div class="catalog" data-catalog="model">
   <div class="catalog__controls">
