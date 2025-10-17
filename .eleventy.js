@@ -1,4 +1,5 @@
 const { DateTime } = require("luxon");
+const syntaxHighlight = require("@11ty/eleventy-plugin-syntaxhighlight");
 
 const md = require("markdown-it")({ html: true, linkify: true })
       .use(require("markdown-it-attrs"));
@@ -18,6 +19,8 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.setLibrary("md", md);
     eleventyConfig.addPassthroughCopy({ "content/images": "images" });
     eleventyConfig.addPassthroughCopy({ "assets": "assets" });
+
+    eleventyConfig.addPlugin(syntaxHighlight);
 
     eleventyConfig.addFilter("sortByTitle", collection => {
 	return [...(collection || [])].sort(byTitle);
