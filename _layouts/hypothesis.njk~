@@ -1,0 +1,35 @@
+---
+layout: base.njk
+---
+<article>
+  <h1>{{ title }}</h1>
+
+  <p>
+    <a class="chip" href="/hypothesis/">All hypotheses</a>
+  </p>
+
+  <div class="prose">
+    {{ content | safe }}
+  </div>
+
+  {% set items = evidenceFor(page.fileSlug) %}
+  {% if items | length %}
+  <section class="related">
+    <h2>Evidence</h2>
+    <ul class="link-list">
+      {% for e in items %}
+        <li>
+          <blockquote class="prose">{{ e.quoteHtml | safe }}</blockquote>
+          <p class="meta">
+            Source: <a href="{{ e.pageUrl }}{{ e.anchor }}">{{ e.pageTitle }}</a>
+            {% if e.note %} • {{ e.note }}{% endif %}
+            {% if e.weight and e.weight != 1 %} • weight {{ e.weight }}{% endif %}
+          </p>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% else %}
+    <p class="meta">No evidence tagged yet.</p>
+  {% endif %}
+</article>

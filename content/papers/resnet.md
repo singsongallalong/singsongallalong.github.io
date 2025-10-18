@@ -7,6 +7,7 @@ description: Primary progenitor in the use of residual layers
 memes:
   - residual
   - vgg-rule
+  - convolution
 themes:
   - trainability
   - architecture
@@ -27,7 +28,7 @@ class Residual(nn.Module):
 		return x + self.block(x)
 ```
 
-which is a very straightforward wrapper. Now "layer" just calculates an additive modification to its input. Of course, when input shapes differ from output shapes, some kind of transformation [A] on the input is required:
+which is a very straightforward wrapper. Now "layer" just calculates an additive modification to its input. Of course, when input shapes differ from output shapes, some kind of transformation [A] on the input is required. Here is an example using [[convolution]] layers:
 
 ```python
 class Residual(nn.Module):
@@ -53,9 +54,9 @@ skip_down = nn.Conv1d(8, 1, 1)
 res_down = Residual(block_down, skip_down)
 ```
 
-which are the three sorts of cases one encounters. The utility of a residual layer is in the complexity gap between the 'proj' layer and the 'block' layer. The two each on their own may be of arbitrary complexity, but the gap is what is hypothetically important. If a linear network is fit to some data and then used as an initialization for a skip in such a residual layer while a near-zero initialization is used for the more complex and non-linear block, the idea is that the network starts from a place no-worse at least than the linear guess/initialization. I only belabor this topic so much because I think that it explains the utility of skips: gluing models together in a way where one already works pretty alright [B]. One could also think of it as a very simple ensemble (on the individual residual layer), analogous to boosting.
+and these are the three sorts of cases one encounters. The utility of a residual layer is in the complexity gap between the 'proj' layer and the 'block' layer. The two each on their own may be of arbitrary complexity, but the gap is what is hypothetically important. If a linear network is fit to some data and then used as an initialization for a skip in such a residual layer while a near-zero initialization is used for the more complex and non-linear block, the idea is that the network starts from a place no-worse at least than the linear guess/initialization. I only belabor this topic so much because I think that it explains the utility of skips: gluing models together in a way where one already works pretty alright [B]. One could also think of it as a very simple ensemble (on the individual residual layer), analogous to boosting.
 
-In resnet, the primary type of blocks are convolutional blocks and the up skips are $1 \times 1$ convolutions. There are two methods of projecting downward: the same as for going up, and truncating the tensor to fit the smaller shape. Downsampling is performed by stride, a common technique in convnets. The average filter size is $3 \times 3$. The residual network used for ablation testing against a plain network is $34$ layers deep and unsurprisingly to our modern vantage point, it outperforms both VGG and the plain network used for comparsion. The task given to resnet is classification as per the ImageNet 2012 dataset. It scored top-$5$ err. 3.57 against VGG's $7.32$. Bottlenecks are employed for resource reasons: a bottleneck layer is one which sandwiches a 'complex' layer between two simple ones which reduce and then increase the dimension, giving a lower dimensional space for the 'complex' layer to work on:
+In resnet, the primary type of blocks are [[convolution]] blocks and the up skips are $1 \times 1$ convolutions. There are two methods of projecting downward: the same as for going up, and truncating the tensor to fit the smaller shape. Downsampling is performed by stride, a common technique in convnets. The average filter size is $3 \times 3$. The residual network used for ablation testing against a plain network is $34$ layers deep and unsurprisingly to our modern vantage point, it outperforms both [[paper:VGGnet]](s) and the plain network used for comparsion. The task given to resnet is classification as per the ImageNet 2012 dataset. It scored top-$5$ err. 3.57 against VGG's $7.32$. Bottlenecks are employed for resource reasons: a bottleneck layer is one which sandwiches a 'complex' layer between two simple ones which reduce and then increase the dimension, giving a lower dimensional space for the 'complex' layer to work on:
 
 ```python
 block_bottleneck = 

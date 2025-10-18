@@ -8,7 +8,7 @@ templateEngineOverride: njk
 
 <header class="home-hero">
   <h1>Memealogy of Models</h1>
-	<p> A 'genealogical' description of traits (memes) and allied notions that have arisen in the historical development of ML models. Memes may only be extracted from papers which contain specific models, rather than being conceived of in the abstract. </p>
+	<p> A 'genealogical' description of traits (memes) and allied notions that have arisen in the historical development of ML models. Memes may only be extracted from papers which contain specific models, rather than being conceived of in the abstract. The practical utility of this study is to extract a library of empirically-proven schemata from which to build new networks.</p>
 </header>
 
 {# -------- Recent models (by date) -------- #}
@@ -53,6 +53,6 @@ templateEngineOverride: njk
 <p>[2] https://fexpr.blogspot.com/2014/03/the-great-vectors-versus-quaternions.html </p>
 <p>[3] Simon L. Altmann, Hamilton, Rodrigues, and the Quaternion Scandal, 1989 https://worrydream.com/refs/Altmann_1989_-_Hamilton,_Rodrigues,_and_the_Quaternion_Scandal.pdf </p>
 <p>[4] A.B. Basset, A Treatise On Hydrodynamics, With Numerous Examples, 1888, Volume 2, p. 1 </p>
-<p>[5] Tai-Peng Tsai, Lectures on Navier-Stokes Equations, 2017 \\
+<p>[5] Tai-Peng Tsai, Lectures on Navier-Stokes Equations, 2017 </p>
 <p>[6] van den Oord et al, Pixel Recurrent Neural Networks, 2016, https://arxiv.org/pdf/1601.06759 </p>
 </section>

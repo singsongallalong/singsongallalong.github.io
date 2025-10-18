@@ -1,0 +1,68 @@
+---
+layout: base.njk
+---
+<article>
+  <h1>{{ title }}</h1>
+
+  <p>
+    <a class="chip" href="/hypothesis/">All hypotheses</a>
+  </p>
+
+  <div class="prose">
+    {{ content | safe }}
+  </div>
+
+  {% set items = page.fileSlug | evidenceFor %}
+  {% if items | length %}
+  <section class="related">
+    <h2>Evidence</h2>
+    <ul class="link-list">
+      {% for e in items %}
+        <li>
+          <blockquote class="prose">{{ e.quoteHtml | safe }}</blockquote>
+          <p class="meta">
+            Source: <a href="{{ e.pageUrl }}{{ e.anchor }}">{{ e.pageTitle }}</a>
+            {% if e.note %} • {{ e.note }}{% endif %}
+            {% if e.weight and e.weight != 1 %} • weight {{ e.weight }}{% endif %}
+          </p>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% else %}
+    <p class="meta">No evidence tagged yet.</p>
+  {% endif %}
+</article>
+
+{% if not (items | length) %}
+<script>
+(async () => {
+  try {
+    const res = await fetch("{{ '/assets/evidence.json' | url }}");
+    const json = await res.json();
+    const all = Array.isArray(json.items) ? json.items : [];
+    const mine = all.filter(e => (e.hypothesis || '').toLowerCase() === "{{ page.fileSlug }}");
+    if (!mine.length) return;
+
+    const ul = document.querySelector(".related ul.link-list");
+    const container = ul || (function () {
+      const sec = document.createElement('section');
+      sec.className = 'related';
+      sec.innerHTML = '<h2>Evidence</h2><ul class="link-list"></ul>';
+      document.querySelector('article').appendChild(sec);
+      return sec.querySelector('ul');
+    })();
+
+    // Render items
+    mine.forEach(e => {
+      const li = document.createElement('li');
+      li.innerHTML =
+        `<blockquote class="prose">${e.quoteHtml}</blockquote>
+         <p class="meta">Source: <a href="${e.pageUrl || '#'}${e.anchor || ''}">${e.pageTitle || 'Source'}</a>
+         ${e.note ? ' • ' + e.note : ''}${(e.weight && e.weight != 1) ? ' • weight ' + e.weight : ''}</p>`;
+      container.appendChild(li);
+    });
+  } catch {}
+})();
+</script>
+{% endif %}

@@ -52,6 +52,7 @@ module.exports = class {
 	const rawThemes = Array.isArray(data.collections?.themes) ? data.collections.themes : [];
 	const rawModels = Array.isArray(data.collections?.papers) ? data.collections.papers : [];
 	const rawConcepts = Array.isArray(data.collections?.concepts) ? data.collections.concepts : [];
+	const rawHypotheses = Array.isArray(data.collections?.hypotheses) ? data.collections.hypotheses : [];
 
 
 	// 2) Project everything to plain, serializable refs and plain metadata
@@ -160,6 +161,18 @@ module.exports = class {
 		memes: (data.collections?.memes || [])
 		    .filter(m => (m.data?.concepts || []).map(s => String(s).toLowerCase().trim()).includes(c.fileSlug))
 		    .map(m => ({ slug: m.fileSlug, title: m.data?.title || m.fileSlug, url: m.url, type: "meme" })),
+	    });
+	}
+
+	for (const it of rawHypotheses) {
+	    const title = (it.data?.title || it.fileSlug);
+	    entries.push({
+		type: "hypothesis",
+		slug: it.fileSlug,
+		title,
+		url: it.url,
+		description: (it.data?.description || "").trim(),
+		// (optional) models: [], // you can prefill later if you want “Models:” chips
 	    });
 	}
 

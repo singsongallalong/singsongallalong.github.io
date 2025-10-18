@@ -305,4 +305,21 @@ a:hover, a:focus { text-decoration: underline; }
 .stat-num { font-size:1.5rem; font-weight:700; display:block; }
 .stat-label { opacity:.8; }
 
+pre[class*="language-"],
+code[class*="language-"] {
+  background: #0f1115;  /* blend with your dark theme */
+  color: #dcdcdc;
+  border-radius: 8px;
+}
 
+pre[class*="language-"] {
+  padding: 1rem;
+  overflow: auto;
+}
+
+/* Optional: monospace font */
+code, pre, pre code {
+  font-family: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}

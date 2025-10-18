@@ -1,5 +1,7 @@
 const { DateTime } = require("luxon");
 const syntaxHighlight = require("@11ty/eleventy-plugin-syntaxhighlight");
+const evidenceStore = [];
+globalThis.evidenceStore = evidenceStore; // <-- add this line
 
 const md = require("markdown-it")({ html: true, linkify: true })
       .use(require("markdown-it-attrs"));
@@ -15,10 +17,42 @@ const byTitle = (a, b) => {
 const removeIndexEntries = items =>
       (items || []).filter(item => item.fileSlug && item.fileSlug !== "index");
 
+
+function stripHtml(html = "") {
+  return String(html)
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function enhanceEvidenceHtml(html) {
+  // add lazy-loading etc. to all images
+  html = html.replace(/<img\s+([^>]*?)>/gi, (m, attrs) => {
+    let a = attrs;
+    if (!/\bloading=/.test(a))  a += ' loading="lazy"';
+    if (!/\bdecoding=/.test(a)) a += ' decoding="async"';
+    if (!/\bclass=/.test(a))    a += ' class="evidence-img"';
+    return `<img ${a}>`;
+  });
+
+  // convert bare images with a title attribute into <figure>
+  // (markdown: ![alt](src "Caption") -> title="Caption")
+  html = html.replace(
+    /^(?:\s*<p>)?\s*<img([^>]*?)title="([^"]+)"([^>]*?)>\s*(?:<\/p>)?$/i,
+    (_m, pre, caption, post) =>
+      `<figure class="evidence-figure"><img ${pre} ${post}><figcaption>${caption}</figcaption></figure>`
+  );
+
+  return html;
+}
+
 module.exports = function (eleventyConfig) {
     eleventyConfig.setLibrary("md", md);
     eleventyConfig.addPassthroughCopy({ "content/images": "images" });
     eleventyConfig.addPassthroughCopy({ "assets": "assets" });
+    eleventyConfig.addGlobalData("evidenceStore", evidenceStore);
 
     eleventyConfig.addPlugin(syntaxHighlight);
 
@@ -77,6 +111,10 @@ module.exports = function (eleventyConfig) {
 	);
     });
 
+    eleventyConfig.addFilter("evidenceFor", (slug) =>
+	evidenceStore.filter(e => e.hypothesis === String(slug).toLowerCase())
+    );
+
     // Collections
     eleventyConfig.addCollection("papers", collectionApi =>
 	removeIndexEntries(
@@ -95,10 +133,13 @@ module.exports = function (eleventyConfig) {
 	    collectionApi.getFilteredByGlob("content/themes/**/*.md")
 	).sort(byTitle)
     );
-
-    // add alongside your existing memes/themes/papers
+    
     eleventyConfig.addCollection("concepts", api =>
 	api.getFilteredByGlob("content/concepts/**/*.md")
+    );
+
+    eleventyConfig.addCollection("hypotheses", (api) =>
+	api.getFilteredByGlob("content/hypotheses/**/*.md")
     );
 
     // helpers
@@ -159,6 +200,45 @@ module.exports = function (eleventyConfig) {
 
 	    return `<a href="${href}">${escapeHtml(display)}</a>`;
 	});
+    });
+
+    eleventyConfig.addPairedShortcode("evidence", function (content, slugs, opts = {}) {
+	const page = this.page || {};
+	const ids = (Array.isArray(slugs) ? slugs : String(slugs || ""))
+	      .split(",")
+	      .map(s => s.trim().toLowerCase())
+	      .filter(Boolean);
+
+	const id = opts.id ||
+	      `ev-${(page.fileSlug || "p")}-${ids[0] || "h"}-${Math.random().toString(36).slice(2, 8)}`;
+
+	// Render inner Markdown to HTML, then enhance images
+	const innerHtml = md.render(content.trim());
+	const quoteHtml = enhanceEvidenceHtml(innerHtml);
+
+	// Plain-text excerpt for search / summaries
+	const excerpt = stripHtml(quoteHtml);
+	const weight  = Number(opts.weight || 1) || 1;
+	const note    = String(opts.note || "");
+
+	for (const h of ids) {
+	    evidenceStore.push({
+		hypothesis: h,
+		pageUrl: page.url,
+		pageTitle: (page.data && page.data.title) || page.fileSlug || page.inputPath,
+		anchor: `#${id}`,
+		id,
+		quoteHtml,
+		excerpt: excerpt.length > 280 ? `${excerpt.slice(0, 277)}…` : excerpt,
+		weight,
+		note,
+	    });
+	}
+
+	return `
+<blockquote id="${id}" class="evidence" data-hypotheses="${ids.join(",")}"${note ? ` data-note="${note}"` : ""}>
+  ${quoteHtml}
+</blockquote>`;
     });
 
     return {

@@ -1,0 +1,8 @@
+---
+layout: hypothesis.njk
+title: soc-efficiency
+permalink: /hypothesis/{{ page.fileSlug }}/
+description: Separating concerns amongst substantially independent agents is efficient
+---
+
+The efficiency of separation of concerns: the hypothesis that in general, efficient designs will often result in the responsibillities and goals of distinct 'actors' or 'components' being disjoint, separate, or orthogonal in a suitable sense. Another way of stating that efficiency tends towards specialization. 
