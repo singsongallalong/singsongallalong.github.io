@@ -1,0 +1,9 @@
+---
+layout: meme.njk
+title: "weight-decay"
+permalink: /meme/{{ page.fileSlug }}/
+description: Augmented loss which punishes large weights.
+concepts: []
+---
+
+An incredibly complex and far-reaching topic for a variety of reasons, and a very important meme, although simple to describe. Weight-decay works by adding a term to the loss function which is the squared $L^2$ norm of the weights. So all else equal, it rewards networks which are closer to zero in terms of their weights. This meme shows up very-very often and can serve many distinct purposes. Sometimes it is real regularization, in the sense that it helps reduce overfitting, measured by the gap between performance on training data and test data. However it can also be a modeling choice rather than a regularization technique when it considerably alters the performance on training data (for the better) e.g. [[alexnet]]. 

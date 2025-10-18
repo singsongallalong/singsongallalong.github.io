@@ -8,6 +8,9 @@ memes:
   - residual
   - vgg-rule
   - convolution
+  - relu
+  - weight-decay
+  - small-kernels
 themes:
   - trainability
   - architecture
