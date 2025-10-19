@@ -8,7 +8,7 @@ templateEngineOverride: njk
 
 <header class="home-hero">
   <h1>Memealogy of Models</h1>
-	<p> A 'genealogical' description of traits (memes) and allied notions that have arisen in the historical development of ML models. Memes may only be extracted from papers which contain specific models, rather than being conceived of in the abstract. The practical utility of this study is to extract a library of empirically-proven schemata from which to build new networks.</p>
+	<p> A 'genealogical' description of traits (memes) and allied notions that have arisen in the historical development of ML models. Memes may only be extracted from papers which contain specific models, rather than being conceived of in the abstract. The practical utility of this study is to extract a library of empirically-proven schemata from which to build new networks. Many links may be dead! This is because I have tagged things here in advance of having actually written the corresponding pages. Motivation / methodology / etc below.</p>
 </header>
 
 {# -------- Recent models (by date) -------- #}
