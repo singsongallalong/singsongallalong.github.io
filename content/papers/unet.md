@@ -3,7 +3,7 @@ layout: papers/_include/post.njk
 title: "Unet"
 permalink: /model/{{ page.fileSlug }}/
 date: 2015-05-18
-description: Starting point of all unets, backbone for early diffusion models
+description: Core image2image architecture and inspiration for backbone net in early diffusion models
 memes:
   - convolution
   - relu

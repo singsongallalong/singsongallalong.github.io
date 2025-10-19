@@ -3,7 +3,7 @@ layout: papers/_include/post.njk
 title: "Pixel Recurrent Neural Networks"
 permalink: /model/{{ page.fileSlug }}/
 date: 2016-01-01
-description: Autoregressive model which is an important immediate ancestor to Wavenet
+description: Autoregressive model which is an important immediate ancestor to many important convnets
 memes:
   - idiotropy
   - autoregression
