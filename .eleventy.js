@@ -17,6 +17,14 @@ const md = require("markdown-it")({ html: true, linkify: true })
     };
   });
 
+const byTitle = (a, b) => {
+    const titleA = (a.data.title || a.fileSlug || "").toLowerCase();
+    const titleB = (b.data.title || b.fileSlug || "").toLowerCase();
+    if (titleA < titleB) return -1;
+    if (titleA > titleB) return 1;
+    return 0;
+};
+
 const removeIndexEntries = items =>
       (items || []).filter(item => item.fileSlug && item.fileSlug !== "index");
 
