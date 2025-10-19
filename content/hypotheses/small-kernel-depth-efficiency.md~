@@ -1,0 +1,8 @@
+---
+layout: hypothesis.njk
+title: small-kernels-depth-efficiency
+permalink: /hypothesis/{{ page.fileSlug }}/
+description: Smaller kernels over multiple layers outperform shallower stacks with larger kernels 
+---
+
+The [[hypothesis--small-kernel-depth-efficiency]] hypothesis is essentially the idea that deeper conv stacks with smaller kernels are superior to shallower nets with larger kernels. Some of the motivation:  "we use very small 3x3 receptive fields throughout the whole net, which are convolved with the input at every pixel (with stride 1). It is easy to see that a stack of two 3x3 conv. layers (without spatial pooling in between) has an effective receptive field of 5x5; three such layers have a 7x7 effective receptive field. So what have we gained by using, for instance, a stack of three 3x3 conv. layers instead of a single 7x7 layer? First, we incorporate three non-linear rectification layers instead of a single one, which makes the decision function more discriminative. Second, we decrease the number of parameters: assuming that both the input and the output of a three-layer 3x3 convolution stack has C channels, the stack is parametrised by $3 (3^2C^2) = 27C^2$ weights; at the same time, a single 7x7 conv. layer would require $7^2C^2 = 49C^2$ parameters, i.e. 81% more. This can be seen as imposing a regularisation on the 7x7 conv. filters, forcing them to have a decomposition through the 3x3 filters (with non-linearity injected in between)." (VGGnet paper, pp. 2-3).

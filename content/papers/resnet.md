@@ -11,6 +11,7 @@ memes:
   - relu
   - weight-decay
   - small-kernels
+  - bottleneck
 themes:
   - trainability
   - architecture

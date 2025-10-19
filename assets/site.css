@@ -323,3 +323,49 @@ code, pre, pre code {
   font-size: 0.95rem;
   line-height: 1.5;
 }
+
+.figure-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1.25rem auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.figure-img--wide {
+  width: 100%;
+}
+
+.figure-img--narrow {
+  max-width: 60%;
+}
+
+.figure-caption {
+  font-size: 0.875rem;
+  text-align: center;
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+
+blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 0.75rem 1.25rem;
+  margin: 1.25rem 0;
+  background: var(--surface);
+  border-radius: 0.5rem;
+  font-style: italic;
+  color: var(--muted);
+}
+
+blockquote p {
+  margin: 0;
+}
+
+blockquote cite {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--muted);
+  text-align: right;
+}

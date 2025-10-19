@@ -4,15 +4,18 @@ const evidenceStore = [];
 globalThis.evidenceStore = evidenceStore; // <-- add this line
 
 const md = require("markdown-it")({ html: true, linkify: true })
-      .use(require("markdown-it-attrs"));
+  .use(require("markdown-it-attrs"))
+  .use((md) => {
+    // Wrap all blockquotes with a default .quote class
+    const originalRender = md.renderer.rules.blockquote_open || function(tokens, idx, options, env, self) {
+      return self.renderToken(tokens, idx, options);
+    };
 
-const byTitle = (a, b) => {
-    const titleA = (a.data.title || a.fileSlug || "").toLowerCase();
-    const titleB = (b.data.title || b.fileSlug || "").toLowerCase();
-    if (titleA < titleB) return -1;
-    if (titleA > titleB) return 1;
-    return 0;
-};
+    md.renderer.rules.blockquote_open = function (tokens, idx, options, env, self) {
+      tokens[idx].attrJoin("class", "quote");
+      return originalRender(tokens, idx, options, env, self);
+    };
+  });
 
 const removeIndexEntries = items =>
       (items || []).filter(item => item.fileSlug && item.fileSlug !== "index");
@@ -169,6 +172,7 @@ module.exports = function (eleventyConfig) {
 	    concept: (slug) => `/concept/${slug}/`,
 	    model: (slug) => `/model/${slug}/`,
 	    paper: (slug) => `/model/${slug}/`,
+	    hypothesis: (slug) => `/hypothesis/${slug}/`,
 	};
 
 	const escapeHtml = (s) =>
