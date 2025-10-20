@@ -7,9 +7,77 @@ templateEngineOverride: njk
 ---
 
 <header class="home-hero">
-  <h1>Memealogy of Models</h1>
+  <h1>Genealogy of Models</h1>
 	<p> A 'genealogical' description of traits (memes) and allied notions that have arisen in the historical development of ML models. Memes may only be extracted from papers which contain specific models, rather than being conceived of in the abstract. The practical utility of this study is to extract a library of empirically-proven schemata from which to build new networks. Many links may be dead! This is because I have tagged things here in advance of having actually written the corresponding pages. Motivation / methodology / etc below.</p>
 </header>
+
+<h1>Model Genealogy</h1>
+<p class="meta">Pick a meme/theme to color nodes that contain it. Click a node to open i page.</p>
+
+<div style="display:flex; gap:.5rem; align-items:end; flex-wrap:wrap; margin:.5rem 0 1rem;">
+  <label>Kind
+    <select id="tag-kind">
+      <option value="meme">Meme</option>
+      <option value="theme">Theme</option>
+    </select>
+  </label>
+  <label>Tag
+    <input id="tag-slug" type="search" placeholder="e.g. autoregression or receptive-field" list="tag-suggestions" style="min-width:16rem">
+    <datalist id="tag-suggestions"></datalist>
+  </label>
+  <button class="chip" id="apply-tag">Apply</button>
+  <button class="chip" id="clear-tag">Clear</button>
+  <button class="chip" id="fit">Fit</button>
+  <button class="chip" id="rerun">Layout</button>
+</div>
+
+<div id="cy" style="height:70vh; border:1px solid var(--surface-border); border-radius:.75rem; background:var(--surface);"></div>
+
+<!-- libs -->
+<script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
+<script src="https://unpkg.com/dagre@0.8.5/dist/dagre.min.js"></script>
+<script src="https://unpkg.com/cytoscape-dagre@2.5.0/cytoscape-dagre.js"></script>
+
+<script>
+  // important for CDN builds
+  if (window.cytoscape && window.cytoscapeDagre) {
+    window.cytoscape.use(window.cytoscapeDagre);
+  }
+</script>
+
+<!-- our module -->
+{% raw %}{% endraw %}
+<script src="/assets/model-graph.js"></script>
+
+<script>
+(async function () {
+  // suggestions
+  const res = await fetch("{{ '/assets/models-graph.json' | url }}");
+  const graph = await res.json();
+  const allTags = [...new Set([
+    ...graph.nodes.flatMap(n => n.memes || []),
+    ...graph.nodes.flatMap(n => n.themes || [])
+  ])].sort();
+  const dl = document.getElementById('tag-suggestions');
+  allTags.forEach(slug => { const o=document.createElement('option'); o.value=slug; dl.appendChild(o); });
+
+  // init
+  const cy = await initModelGraph({
+    container: '#cy',
+    dataUrl: "{{ '/assets/models-graph.json' | url }}",
+    rankDir: 'LR' // or 'TB'
+  });
+
+  // controls
+  document.getElementById('apply-tag').addEventListener('click', () => {
+    cy.__applyTag(document.getElementById('tag-kind').value, document.getElementById('tag-slug').value);
+  });
+  document.getElementById('clear-tag').addEventListener('click', () => cy.__clearTag());
+  document.getElementById('fit').addEventListener('click', () => cy.__fit());
+  document.getElementById('rerun').addEventListener('click', () => cy.__rerun());
+})();
+</script>
+
 
 {# -------- Recent models (by date) -------- #}
 <section class="home-recent">
