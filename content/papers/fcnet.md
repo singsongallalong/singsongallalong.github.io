@@ -6,12 +6,12 @@ date: 2015-03-08
 description: Fully convolutional network which introduced tconvs for upsampling a la unets 
 memes:
   - convolution
-  - multiscale
   - small-kernels
   - ushape
   - unet-skips
   - relu
   - transposed-convolution
+  - weight-decay
 themes:
 ancestors: ['alexnet', 'vggnet']
 ---
