@@ -10,6 +10,7 @@ memes:
   - relu
   - weight-decay
   - small-kernels
+  - softmax-multinomial
 themes:
   - depth
   - architecture
@@ -26,4 +27,4 @@ In total, the learning rate was decreased 3 times, and the learning was stopped 
 We also compared the net B with a shallow net with five 5x5 conv. layers, which was derived from B by replacing each pair of 3x3 conv. layers with a single 5x5 conv. layer (which has the same receptive field as explained in Sect. 2.3). The top-1 error of the shallow net was measured to be 7% higher than that of B (on a center crop), which confirms that a deep net with small filters outperforms a shallow net with larger filters.
 {% endevidence %}
 
-Like [[paper:alexnet]] the final three layers are fully-connected and [[softmax-sampling]] is used to actually calculate the output prediction. Basically the entire head (final section) of the network is taken from [[paper:alexnet]] down to the numbers. As in [[paper:alexnet]], the dense layers at the end take up most of the parameter-count.
+Like [[paper:alexnet]] the final three layers are fully-connected and [[softmax-multinomial]] is used to emit the resulting distribution. Basically the entire head (final section) of the network is taken from [[paper:alexnet]] down to the numbers. As in [[paper:alexnet]], the dense layers at the end take up most of the parameter-count.

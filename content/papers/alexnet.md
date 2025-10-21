@@ -10,12 +10,13 @@ memes:
   - local-response-normalization
   - dropout
   - weight-decay
+  - softmax-multinomial
 themes:
   - compute-resources
 ancestors: []
 ---
 
-"ImageNet Classification with Deep Convolutional Neural Networks," Krizhevsky et al., https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf. I will not write an extended exposition on this paper because it is sufficiently old to mostly consist of well-trodden ground. The architecture is all that I will write about and mostly for recording purposes. The nonlinearities used are exclusively [[relu]] units, which would become an important structural meme in many [[convolution]]-nets, popularized by this paper. The network is situated so that the first five layers are convolutional, the last three are fully connected, and the output is given to a softmax over the resulting $1000$-long vector (a case of the ubiquitous [[softmax-sample]]). Normalization follows convolutional layers one and two, and the normalization is [[local-response-normalization]], which was introduced in this paper. The convolutional layers look like (this implementation is not faithful due to the split GPU training in the original, but the layers are summarized here):
+"ImageNet Classification with Deep Convolutional Neural Networks," Krizhevsky et al., https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf. I will not write an extended exposition on this paper because it is sufficiently old to mostly consist of well-trodden ground. The architecture is all that I will write about and mostly for recording purposes. The nonlinearities used are exclusively [[relu]] units, which would become an important structural meme in many [[convolution]]-nets, popularized by this paper. The network is situated so that the first five layers are convolutional, the last three are fully connected, and the output is given to a softmax over the resulting $1000$-long vector (a case of the ubiquitous [[softmax-multinomial]] meme) and a log-likelihood is used for loss. Normalization follows convolutional layers one and two, and the normalization is [[local-response-normalization]], which was introduced in this paper. The convolutional layers look like (this implementation is not faithful due to the split GPU training in the original, but the layers are summarized here):
 
 ```python
 convnet = nn.Sequential(
